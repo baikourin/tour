@@ -1,5 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:tour/dao/home_dao.dart';
+import 'package:tour/model/common_model.dart';
+import 'package:tour/model/home_model.dart';
+import 'package:tour/widget/grid_nav.dart';
+import 'package:tour/widget/local_nav.dart';
 
 const APPBAR_SCROLL_OFFSET = 100;
 
@@ -15,6 +22,14 @@ class _HomePageState extends State<HomePage> {
     'https://dimg04.c-ctrip.com/images/700c10000000pdili7D8B_780_235_57.jpg'
   ];
   double appBarAlpha = 0;
+  List<CommonModel> localNavList = [];
+  String resultString = "";
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   _onScroll(offset){
     double alpha = offset / APPBAR_SCROLL_OFFSET;
@@ -28,9 +43,34 @@ class _HomePageState extends State<HomePage> {
     });
     print('appBarAlpha:'+ appBarAlpha.toString());
   }
+
+  loadData() async {
+//    HomeDao.fetch().then((result) {
+//      setState(() {
+//        resultString = json.encode(result);
+//      });
+//    }).catchError((e) {
+//      setState(() {
+//        resultString = e.toString();
+//      });
+//    });
+    try {
+      HomeModel model = await HomeDao.fetch();
+      setState(() {
+        localNavList = model.localNavList;
+        resultString = json.encode(model.config);
+      });
+    } catch (e) {
+      setState(() {
+        resultString = e.toString();
+      });
+    }
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff2f2f2),
       // Stack前面的元素叠在下面，后面的元素叠在上面
         body: Stack(
           children: <Widget>[
@@ -64,9 +104,14 @@ class _HomePageState extends State<HomePage> {
                           pagination: SwiperPagination(),
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
+                        child: LocalNav(localNavList: localNavList),
+                      ),
+                      GridNav(gridNavModel: null, name: 'dada'),
                       Container(
                         height: 800,
-                        child: ListTile(title: Text('haha'),
+                        child: ListTile(title: Text(resultString),
                         ),
                       )
                     ],
