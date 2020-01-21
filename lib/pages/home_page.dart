@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                           pagination: SwiperPagination(),
                         ),
                       ),
+                      /*local导航*/
                       Padding(
                         padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
                         child: LocalNav(localNavList: localNavList),
