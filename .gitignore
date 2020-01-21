@@ -73,6 +73,7 @@ doc/api/
 **/ios/**/Pods/
 **/ios/**/.symlinks/
 **/ios/**/profile
+ios/Podfile*
 **/ios/**/xcuserdata
 **/ios/.generated/
 **/ios/Flutter/App.framework
