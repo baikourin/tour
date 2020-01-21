@@ -104,11 +104,12 @@ class _HomePageState extends State<HomePage> {
                           pagination: SwiperPagination(),
                         ),
                       ),
-                      /*local导航*/
+                      /*localのナビ*/
                       Padding(
                         padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
                         child: LocalNav(localNavList: localNavList),
                       ),
+
                       GridNav(gridNavModel: null, name: 'dada'),
                       Container(
                         height: 800,
