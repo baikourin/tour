@@ -44,10 +44,15 @@ doc/api/
 **/doc/api/
 .dart_tool/
 .flutter-plugins
+.flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
 /build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -74,6 +79,7 @@ doc/api/
 **/ios/**/.symlinks/
 **/ios/**/profile
 ios/Podfile*
+**/ios/Flutter/Flutter.podspec
 **/ios/**/xcuserdata
 **/ios/.generated/
 **/ios/Flutter/App.framework
@@ -82,6 +88,7 @@ ios/Podfile*
 **/ios/Flutter/app.flx
 **/ios/Flutter/app.zip
 **/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
