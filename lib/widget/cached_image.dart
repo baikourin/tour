@@ -22,7 +22,6 @@ class CachedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return inSizeBox
         ? FractionallySizedBox(
             widthFactor: 1,
