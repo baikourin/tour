@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tour/model/common_model.dart';
 import 'package:tour/model/grid_nav_model.dart';
+import 'package:tour/widget/cached_image.dart';
 
 class GridNav extends StatelessWidget{
   final GridNavModel gridNav;
@@ -65,7 +66,18 @@ class GridNav extends StatelessWidget{
     Widget mainWidget = Stack(
       alignment: AlignmentDirectional.topCenter,
       children: <Widget>[
-        // TODO
+        CachedImage(
+          imageUrl: model.icon,
+          fit: BoxFit.contain,
+          height: 88,
+          width: 121,
+          alignment: AlignmentDirectional.bottomEnd,
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 11),
+          child: Text(model.title,
+            style: TextStyle(fontSize: 14, color: Colors.white)),
+        )
       ],
     );
     return _wrapGesture(context, mainWidget, model);
