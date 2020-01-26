@@ -70,7 +70,11 @@ class _WebViewState extends State<WebView> {
     });
     _onHttpError =
         webviewReference.onHttpError.listen((WebViewHttpError error) {
-      print(error.url);
+      print(error.code);
+      // TODO 404ページの作成
+      if (error.code == "404") {
+        Navigator.pop(context);
+      }
     });
   }
 
