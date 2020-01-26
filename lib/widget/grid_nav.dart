@@ -7,9 +7,8 @@ import 'package:tour/widget/webview.dart';
 
 class GridNav extends StatelessWidget{
   final GridNavModel gridNav;
-  final String name;
 
-  const GridNav({Key key, @required this.gridNav, this.name='xiaoming'}) : super(key: key);
+  const GridNav({Key key, @required this.gridNav}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +91,6 @@ class GridNav extends StatelessWidget{
   }
 
   Widget _doubleItem(BuildContext context, CommonModel topItem, CommonModel bottomItem){
-    // TODO
     return Column(
       children: <Widget>[
         // 扩大
@@ -113,7 +111,6 @@ class GridNav extends StatelessWidget{
   }
 
   Widget _wrapGesture(BuildContext context, Widget widget, CommonModel model){
-    // TODO
     return GestureDetector(
       onTap: (){
         NavigatorUtil.push(
