@@ -6,7 +6,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 const CATCH_URLS = ['m.ctrip.com/', 'm.ctrip.com/html5/', 'm.ctrip.com/html5'];
 
 class WebView extends StatefulWidget {
-  final String url;
+  String url;
   final String statusBarColor;
   final String title;
   final bool hideAppBar;
@@ -17,7 +17,12 @@ class WebView extends StatefulWidget {
       this.statusBarColor,
       this.title,
       this.hideAppBar,
-      this.backForbid = false});
+      this.backForbid = false}) {
+    if (url != null && url.contains('ctrip.com')) {
+      // fix 携程H5 http://无法打开问题
+      url = url.replaceAll("http:", "https:");
+    }
+  }
 
   @override
   _WebViewState createState() => _WebViewState();
@@ -34,7 +39,12 @@ class _WebViewState extends State<WebView> {
   void initState() {
     super.initState();
     webviewReference.close();
-    _onUrlChanged = webviewReference.onUrlChanged.listen((String url) {});
+    _onUrlChanged = webviewReference.onUrlChanged.listen((String url) {
+      //对非http获取https链接判断
+      if (url == null || !url.startsWith('http')) {
+        webviewReference.stopLoading();
+      }
+    });
     _onStateChanged =
         webviewReference.onStateChanged.listen((WebViewStateChanged state) {
       switch (state.type) {
@@ -49,6 +59,10 @@ class _WebViewState extends State<WebView> {
               exiting = true;
             }
           }
+          break;
+        case WebViewState.finishLoad:
+          break;
+        case WebViewState.abortLoad:
           break;
         default:
           break;
@@ -69,6 +83,7 @@ class _WebViewState extends State<WebView> {
     super.dispose();
   }
 
+  // 判断url是否是首页
   bool _isToMain(String url) {
     bool contain = false;
     for (final value in CATCH_URLS) {
@@ -94,22 +109,28 @@ class _WebViewState extends State<WebView> {
       body: Column(
         children: <Widget>[
           _appBar(
-              Color(int.parse('0xff' + statusBarColorStr)), backButtonColor),
-          Expanded(child: WebviewScaffold(url: widget.url,
-          withZoom: true,
-          withLocalStorage: true,
-          hidden: true,
-          initialChild: Container(
-            color: Colors.white,
-            child: Center(
-              child: Text('Waiting...'),
-            ),
-          ),),)
+            Color(int.parse('0xff' + statusBarColorStr)), backButtonColor),
+          Expanded(
+            child: WebviewScaffold(
+              url: widget.url,
+              userAgent: 'null',
+              //防止携程H5页面重定向到打开携程APP ctrip://wireless/xxx的网址
+              withZoom: true,
+              withLocalStorage: true,
+              hidden: true,
+              enableAppScheme: true,
+              initialChild: Container(
+                color: Colors.white,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),),)
         ],
       ),
     );
   }
 
+  //自定义webview appBar
   Widget _appBar(Color backgroundColor, Color backButtonColor) {
     if (widget.hideAppBar ?? false) {
       return Container(
