@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tour/model/common_model.dart';
 import 'package:tour/model/grid_nav_model.dart';
+import 'package:tour/util/navigator_util.dart';
 import 'package:tour/widget/cached_image.dart';
+import 'package:tour/widget/webview.dart';
 
 class GridNav extends StatelessWidget{
   final GridNavModel gridNav;
@@ -17,7 +19,7 @@ class GridNav extends StatelessWidget{
       borderRadius: BorderRadius.circular(6),
       clipBehavior: Clip.antiAlias,
       child: Column(
-        children: <Widget>[],
+        children: _gridNavItems(context),
       ),
     );
   }
@@ -27,6 +29,12 @@ class GridNav extends StatelessWidget{
     if (gridNav == null) return items;
     if (gridNav.hotel != null) {
       items.add(_gridNavItem(context, gridNav.hotel, true));
+    }
+    if (gridNav.flight != null) {
+      items.add(_gridNavItem(context, gridNav.flight, false));
+    }
+    if (gridNav.travel != null) {
+      items.add(_gridNavItem(context, gridNav.travel, false));
     }
     return items;
   }
@@ -85,23 +93,68 @@ class GridNav extends StatelessWidget{
 
   Widget _doubleItem(BuildContext context, CommonModel topItem, CommonModel bottomItem){
     // TODO
+    return Column(
+      children: <Widget>[
+        // 扩大
+        Expanded(
+          child: _item(
+            context,
+            topItem,
+            true),
+        ),
+        Expanded(
+          child: _item(
+            context,
+            bottomItem,
+            false),
+        )
+      ],
+    );
   }
 
   Widget _wrapGesture(BuildContext context, Widget widget, CommonModel model){
     // TODO
+    return GestureDetector(
+      onTap: (){
+        NavigatorUtil.push(
+          context,
+          WebView(
+            url: model.url,
+            statusBarColor: model.statusBarColor,
+            hideAppBar: model.hideAppBar,
+            title: model.title,
+          )
+        );
+      },
+      child: widget,
+    );
   }
 
-//  @override
-//  _GridNavState createState() => _GridNavState();
+  Widget _item(BuildContext context, CommonModel item, bool first) {
+    BorderSide borderSide = BorderSide(width: 0.8, color: Colors.white);
+    return FractionallySizedBox(
+      //撑满宽度
+      widthFactor: 1,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: borderSide,
+            bottom: first ? borderSide : BorderSide.none)),
+        child: _wrapGesture(
+          context,
+          Center(
+            child: Text(
+              item.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.white),
+            ),
+          ),
+          item
+        ),
+      )
+    );
+  }
 
 }
 
-/*
-class _GridNavState extends State<GridNav>{
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(widget.name);
-  }
-
-}*/
