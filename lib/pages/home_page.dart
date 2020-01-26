@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tour/dao/home_dao.dart';
 import 'package:tour/model/common_model.dart';
+import 'package:tour/model/grid_nav_model.dart';
 import 'package:tour/model/home_model.dart';
 import 'package:tour/widget/grid_nav.dart';
 import 'package:tour/widget/local_nav.dart';
@@ -22,7 +23,8 @@ class _HomePageState extends State<HomePage> {
     'https://dimg04.c-ctrip.com/images/700c10000000pdili7D8B_780_235_57.jpg'
   ];
   double appBarAlpha = 0;
-  List<CommonModel> localNavList = [];
+  List<CommonModel> localNavList = []; // local导航
+  GridNavModel gridNav; // 网络卡片
   String resultString = "";
 
   @override
@@ -58,6 +60,7 @@ class _HomePageState extends State<HomePage> {
       HomeModel model = await HomeDao.fetch();
       setState(() {
         localNavList = model.localNavList;
+        gridNav = model.gridNav;
         resultString = json.encode(model.config);
       });
     } catch (e) {
@@ -109,8 +112,12 @@ class _HomePageState extends State<HomePage> {
                         padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
                         child: LocalNav(localNavList: localNavList),
                       ),
-
-                      GridNav(gridNav: null, name: 'dada'),
+                      /*网络卡片*/
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
+                        child: GridNav(gridNav: gridNav),
+                      ),
+//                      GridNav(gridNav: null, name: 'dada'),
                       Container(
                         height: 800,
                         child: ListTile(title: Text(resultString),
