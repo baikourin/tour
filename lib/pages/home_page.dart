@@ -125,6 +125,11 @@ class _HomePageState extends State<HomePage> {
                         padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
                         child: SubNav(subNavList: subNavList),
                       ),
+                      /*底部卡片*/
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
+                        child: SalesBox(salesBox: salesBox),
+                      ),
                       Container(
                         height: 800,
                         child: ListTile(title: Text(resultString),
