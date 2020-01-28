@@ -8,6 +8,7 @@ import 'package:tour/model/grid_nav_model.dart';
 import 'package:tour/model/home_model.dart';
 import 'package:tour/widget/grid_nav.dart';
 import 'package:tour/widget/local_nav.dart';
+import 'package:tour/widget/sub_nav.dart';
 
 const APPBAR_SCROLL_OFFSET = 100;
 
@@ -25,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   double appBarAlpha = 0;
   List<CommonModel> localNavList = []; // local导航
   GridNavModel gridNav; // 网络卡片
+  List<CommonModel> subNavList = []; // 活动导航
   String resultString = "";
 
   @override
@@ -61,7 +63,9 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         localNavList = model.localNavList;
         gridNav = model.gridNav;
+        subNavList = model.subNavList;
         resultString = json.encode(model.config);
+//        print(subNavList);
       });
     } catch (e) {
       setState(() {
@@ -116,6 +120,11 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
                         child: GridNav(gridNav: gridNav),
+                      ),
+                      /*活动导航*/
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
+                        child: SubNav(subNavList: subNavList),
                       ),
                       Container(
                         height: 800,
