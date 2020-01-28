@@ -65,7 +65,6 @@ class _HomePageState extends State<HomePage> {
         gridNav = model.gridNav;
         subNavList = model.subNavList;
         resultString = json.encode(model.config);
-//        print(subNavList);
       });
     } catch (e) {
       setState(() {
