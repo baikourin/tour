@@ -14,7 +14,6 @@ class SubNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -84,8 +83,5 @@ class SubNav extends StatelessWidget {
       ),
     );
   }
-
-
-
 }
 
