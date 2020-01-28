@@ -6,8 +6,10 @@ import 'package:tour/dao/home_dao.dart';
 import 'package:tour/model/common_model.dart';
 import 'package:tour/model/grid_nav_model.dart';
 import 'package:tour/model/home_model.dart';
+import 'package:tour/model/sales_box_model.dart';
 import 'package:tour/widget/grid_nav.dart';
 import 'package:tour/widget/local_nav.dart';
+import 'package:tour/widget/sales_box.dart';
 import 'package:tour/widget/sub_nav.dart';
 
 const APPBAR_SCROLL_OFFSET = 100;
@@ -27,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   List<CommonModel> localNavList = []; // local导航
   GridNavModel gridNav; // 网络卡片
   List<CommonModel> subNavList = []; // 活动导航
+  SalesBoxModel salesBox;
   String resultString = "";
 
   @override
@@ -64,6 +67,7 @@ class _HomePageState extends State<HomePage> {
         localNavList = model.localNavList;
         gridNav = model.gridNav;
         subNavList = model.subNavList;
+        salesBox = model.salesBox;
         resultString = json.encode(model.config);
       });
     } catch (e) {
@@ -130,11 +134,11 @@ class _HomePageState extends State<HomePage> {
                         padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
                         child: SalesBox(salesBox: salesBox),
                       ),
-                      Container(
-                        height: 800,
-                        child: ListTile(title: Text(resultString),
-                        ),
-                      )
+//                      Container(
+//                        height: 800,
+//                        child: ListTile(title: Text(resultString),
+//                        ),
+//                      )
                     ],
                   ),
                 )
