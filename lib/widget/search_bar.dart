@@ -20,10 +20,10 @@ class SearchBar extends StatefulWidget {
   const SearchBar({
     Key key,
     this.city,
-    this.enabled,
+    this.enabled = true,
     this.hideLeft,
-    this.autofocus,
-    this.searchBarType,
+    this.autofocus = false,
+    this.searchBarType = SearchBarType.normal,
     this.hint,
     this.defaultText,
     this.leftButtonClick,
@@ -40,7 +40,6 @@ class _SearchBarState extends State<SearchBar> {
   bool showClear = false;
   final TextEditingController _controller = TextEditingController();
 
-
   @override
   void initState() {
     if (widget.defaultText != null) {
@@ -51,7 +50,6 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return widget.searchBarType == SearchBarType.normal
         ? _genNormalSearch : _genHomeSearch;
   }
@@ -59,26 +57,19 @@ class _SearchBarState extends State<SearchBar> {
   Widget get _genNormalSearch {
     Widget _cityPart = _wrapTap(
       Container(
-        padding: EdgeInsets.fromLTRB(6, 5, 5, 5),
-        child: Row(
-          children: <Widget>[
-            Text(
-              widget.city,
-              style: TextStyle(color: _homeFontColor, fontSize: 14),
-            ),
-            Icon(
-              Icons.expand_more,
-              color: _homeFontColor,
-              size: 22,
-            )
-          ],
-        ),
+        padding: EdgeInsets.fromLTRB(6, 5, 10, 5),
+        child: widget?.hideLeft ?? false
+            ? null
+            : Icon(
+                Icons.arrow_back_ios,
+                color: Colors.grey,
+                size: 26,
+              ),
       ),
       widget.leftButtonClick
     );
     Widget _inputBoxPart = Expanded(
       flex: 1,
-      // TODO
       child: _inputBox);
     Widget _searchPart = _wrapTap(
       Container(
@@ -169,9 +160,7 @@ class _SearchBarState extends State<SearchBar> {
       decoration: BoxDecoration(
         color: inputBoxColor,
         borderRadius: BorderRadius.circular(
-          widget.searchBarType == SearchBarType.normal ? 5 : 15
-        )
-      ),
+          widget.searchBarType == SearchBarType.normal ? 5 : 15)),
       child: Row(
         children: <Widget>[
           /*search icon*/
@@ -179,28 +168,26 @@ class _SearchBarState extends State<SearchBar> {
             Icons.search,
             size: 20,
             color: widget.searchBarType == SearchBarType.normal
-              ? Color(0xffa9a9a9) : Colors.blue,
-          ),
+              ? Color(0xffa9a9a9) : Colors.blue),
           /* hint text*/
           Expanded(
             flex: 1,
             child: widget.searchBarType == SearchBarType.normal
               ? TextField(
-              controller: _controller,
-              onChanged: _onChanged,
-              autofocus: widget.autofocus,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black,
-                fontWeight: FontWeight.w300
-              ),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                border: InputBorder.none,
-                hintText: widget.hint ?? '',
-                hintStyle: TextStyle(fontSize: 15)
-              ),
-            )
+                  controller: _controller,
+                  onChanged: _onChanged,
+                  autofocus: widget.autofocus,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w300),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(5, 0, 5, 10),
+                    border: InputBorder.none,
+                    hintText: widget.hint ?? '',
+                    hintStyle: TextStyle(fontSize: 15)
+                  )
+              )
             : _wrapTap(
               Container(
                 child: Text(
