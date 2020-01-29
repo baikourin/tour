@@ -57,15 +57,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   loadData() async {
-//    HomeDao.fetch().then((result) {
-//      setState(() {
-//        resultString = json.encode(result);
-//      });
-//    }).catchError((e) {
-//      setState(() {
-//        resultString = e.toString();
-//      });
-//    });
     try {
       HomeModel model = await HomeDao.fetch();
       setState(() {
@@ -131,19 +122,6 @@ class _HomePageState extends State<HomePage> {
             ),
             // 透明度设定
             _appBar
-//            Opacity(
-//              opacity: appBarAlpha,
-//              child: Container(
-//                height: 80,
-//                decoration: BoxDecoration(color: Colors.white),
-//                child: Center(
-//                  child: Padding(
-//                    padding: EdgeInsets.only(top: 5),
-//                    child: Text('Home'),
-//                  ),
-//                ),
-//              ),
-//            )
           ],
         )
     );
