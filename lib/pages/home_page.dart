@@ -7,12 +7,16 @@ import 'package:tour/model/common_model.dart';
 import 'package:tour/model/grid_nav_model.dart';
 import 'package:tour/model/home_model.dart';
 import 'package:tour/model/sales_box_model.dart';
+import 'package:tour/pages/search_page.dart';
+import 'package:tour/util/navigator_util.dart';
 import 'package:tour/widget/grid_nav.dart';
 import 'package:tour/widget/local_nav.dart';
 import 'package:tour/widget/sales_box.dart';
+import 'package:tour/widget/search_bar.dart';
 import 'package:tour/widget/sub_nav.dart';
 
 const APPBAR_SCROLL_OFFSET = 100;
+const SEARCH_BAR_DEFAULT_TEXT = '网红打卡地 景点 酒店 美食';
 
 class HomePage extends StatefulWidget {
   @override
@@ -31,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   List<CommonModel> subNavList = []; // 活动导航
   SalesBoxModel salesBox;
   String resultString = "";
+  String city = '西安市';
 
   @override
   void initState() {
@@ -77,6 +82,29 @@ class _HomePageState extends State<HomePage> {
     }
 
   }
+
+  //跳转到城市列表
+  void _jumpToCity() async {
+    final result = await NavigatorUtil.push(context, null);
+    setState(() {
+      city = result;
+    });
+  }
+
+  //跳转搜索页面
+  void _jumpToSearch() {
+    NavigatorUtil.push(
+      context,
+      SearchPage(
+        hint: SEARCH_BAR_DEFAULT_TEXT,
+      ));
+  }
+
+  //跳转语音识别页面
+  void _jumpToSpeak() {
+    NavigatorUtil.push(context, null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,67 +126,112 @@ class _HomePageState extends State<HomePage> {
                     }
                     return;
                   },
-                  child: ListView(
-                    children: <Widget>[
-                      Container(
-                        height: 160,
-                        child: Swiper(
-                          itemCount: _imageUrls.length,
-                          autoplay: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Image.network(
-                              _imageUrls[index],
-                              fit: BoxFit.fill,
-                            );
-                          },
-                          pagination: SwiperPagination(),
-                        ),
-                      ),
-                      /*localのナビ*/
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
-                        child: LocalNav(localNavList: localNavList),
-                      ),
-                      /*网络卡片*/
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
-                        child: GridNav(gridNav: gridNav),
-                      ),
-                      /*活动导航*/
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
-                        child: SubNav(subNavList: subNavList),
-                      ),
-                      /*底部卡片*/
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
-                        child: SalesBox(salesBox: salesBox),
-                      ),
-//                      Container(
-//                        height: 800,
-//                        child: ListTile(title: Text(resultString),
-//                        ),
-//                      )
-                    ],
-                  ),
+                child: _listView,
                 )
             ),
             // 透明度设定
-            Opacity(
-              opacity: appBarAlpha,
-              child: Container(
-                height: 80,
-                decoration: BoxDecoration(color: Colors.white),
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text('Home'),
-                  ),
-                ),
-              ),
-            )
+            _appBar
+//            Opacity(
+//              opacity: appBarAlpha,
+//              child: Container(
+//                height: 80,
+//                decoration: BoxDecoration(color: Colors.white),
+//                child: Center(
+//                  child: Padding(
+//                    padding: EdgeInsets.only(top: 5),
+//                    child: Text('Home'),
+//                  ),
+//                ),
+//              ),
+//            )
           ],
         )
     );
   }
+
+  Widget get _listView {
+    return ListView(
+      children: <Widget>[
+        Container(
+          height: 160,
+          child: Swiper(
+            itemCount: _imageUrls.length,
+            autoplay: true,
+            itemBuilder: (BuildContext context, int index) {
+              return Image.network(
+                _imageUrls[index],
+                fit: BoxFit.fill,
+              );
+            },
+            pagination: SwiperPagination(),
+          ),
+        ),
+        /*localのナビ*/
+        Padding(
+          padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
+          child: LocalNav(localNavList: localNavList),
+        ),
+        /*网络卡片*/
+        Padding(
+          padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
+          child: GridNav(gridNav: gridNav),
+        ),
+        /*活动导航*/
+        Padding(
+          padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
+          child: SubNav(subNavList: subNavList),
+        ),
+        /*底部卡片*/
+        Padding(
+          padding: EdgeInsets.fromLTRB(7, 0, 7, 4),
+          child: SalesBox(salesBox: salesBox),
+        ),
+      ],
+    );
+  }
+
+  /* appBar */
+Widget get _appBar {
+  return Column(
+    children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          //TODO gradient斜坡
+          gradient: LinearGradient(
+            colors: [Color(0x66000000), Colors.transparent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter
+          )
+        ),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+          height: 80,
+          decoration: BoxDecoration(
+            color: Color.fromARGB((appBarAlpha * 255).toInt(), 255, 255, 255)
+          ),
+          // TODO
+          child: SearchBar(
+            searchBarType: appBarAlpha > 0.2
+                ? SearchBarType.homeLight
+                : SearchBarType.home,
+            //TODO
+            inputBoxClick: _jumpToSearch,
+            speakClick: _jumpToSpeak,
+            defaultText: SEARCH_BAR_DEFAULT_TEXT,
+            leftButtonClick: _jumpToCity,
+            city: city,
+          ),
+        ),
+      ),
+      Container(
+        height: appBarAlpha>0.2 ? 0.5 : 0,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(color: Colors.black12, blurRadius: 0.5)
+          ]
+        ),
+      )
+    ],
+  );
+}
 }
