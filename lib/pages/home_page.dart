@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f2),
+//      backgroundColor: Color(0xfff2f2f2),
       // Stack前面的元素叠在下面，后面的元素叠在上面
         body: Stack(
           children: <Widget>[
