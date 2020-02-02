@@ -150,7 +150,7 @@ class _SearchPageState extends State<SearchPage> {
           context,
           WebView(
             url: item.url,
-            title: '详情',
+            title: '詳細',
           ));
       },
       child: Container(
