@@ -18,6 +18,8 @@ class _SpeakPageState extends State<SpeakPage>
 
   @override
   void initState() {
+    // AnimationController 动画控制器，动画的开始、结束、停止、反向均由它控制，
+    //  方法对应为：forward、stop、reverse
     controller = AnimationController(
       vsync: this, duration: Duration(milliseconds: 1000));
     animation = CurvedAnimation(parent: controller, curve: Curves.easeIn)
