@@ -17,8 +17,23 @@ class _SpeakPageState extends State<SpeakPage>
   AnimationController controller;
 
   @override
+  void initState() {
+    controller = AnimationController(
+      vsync: this, duration: Duration(milliseconds: 1000));
+    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
+      });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return null;
   }
-
+}
