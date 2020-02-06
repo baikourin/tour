@@ -75,6 +75,18 @@ class _SpeakPageState extends State<SpeakPage>
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return null;
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.all(30),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              // TODO 
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
