@@ -34,6 +34,12 @@ class _SpeakPageState extends State<SpeakPage>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return null;
