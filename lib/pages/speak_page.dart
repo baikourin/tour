@@ -39,6 +39,29 @@ class _SpeakPageState extends State<SpeakPage>
     super.dispose();
   }
 
+  //録音開始
+  void _speakStart() {
+    controller.forward();
+    setState(() {
+      speakTips = '識別中...';
+    });
+    AsrManager.start().then((text) {
+      if (text != null && text.length > 0) {
+        setState(() {
+          speakResult = text;
+        });
+        Navigator.pop(context);
+        NavigatorUtil.push(
+          context,
+          SearchPage(
+            keyword: speakResult,
+          ));
+      }
+    }).catchError((e) {
+      print('--------' + e.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
