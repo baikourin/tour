@@ -62,6 +62,16 @@ class _SpeakPageState extends State<SpeakPage>
     });
   }
 
+  //録音終了
+  void _speakStop() {
+    setState(() {
+      speakTips = '長押しをする';
+    });
+    controller.reset();
+    controller.stop();
+    AsrManager.stop();
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
