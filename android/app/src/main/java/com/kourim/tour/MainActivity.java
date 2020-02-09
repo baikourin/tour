@@ -1,4 +1,4 @@
-package trip.flutter.devio.orgorg.devio.tour;
+package com.kourim.tour;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
