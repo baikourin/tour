@@ -1,12 +1,23 @@
 apply plugin: 'com.android.library'
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
 
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -22,6 +33,10 @@ android {
         }
     }
 
+}
+
+flutter {
+    source '../..'
 }
 
 dependencies {
