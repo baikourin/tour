@@ -39,6 +39,12 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            //只打包flutter所支持的架构，flutter没有armeabi、armeabi-v7a架构的so，加x86的原因是为了能够兼容模拟器
+            //abiFilters "armeabi-v7a" //release 时只打"armeabi-v7包
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86_64", "x86"
+
+        }
     }
 
     buildTypes {
@@ -47,6 +53,16 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
+    }
+
+    // 打包配置
+    //百度语音集成添加
+    packagingOptions {
+        // 确保app与asr_plugin都依赖的libflutter.so merge时不冲突@https://github.com/card-io/card.io-Android-SDK/issues/186#issuecomment-427552552
+        // mei：在打包的时候app 和 plugin会出现两份so，这里只去一份so
+        pickFirst 'lib/x86_64/libflutter.so'
+        pickFirst 'lib/x86/libflutter.so'
+        pickFirst 'lib/arm64-v8a/libflutter.so'
     }
 }
 
