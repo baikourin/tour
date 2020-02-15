@@ -58,7 +58,7 @@ public class AsrPlugin implements MethodChannel.MethodCallHandler {
             return;
         }
         if (getAsrManager()!=null){
-            getAsrManager().start(call.arguments instanceof Map? (Map)call.arguments: null);
+            getAsrManager().start(call.arguments instanceof Map ? (Map) call.arguments : null);
         } else {
             Log.e(TAG, "Ignored start, current activity is null.");
             result.error("Ignored start, current activity is null.", null, null);
@@ -82,7 +82,7 @@ public class AsrPlugin implements MethodChannel.MethodCallHandler {
     private AsrManager getAsrManager(){
         if (asrManager==null){
             // 不为空，没有被销毁
-            if (activity != null&&activity.isFinishing()){
+            if (activity != null && !activity.isFinishing()) {
                 asrManager = new AsrManager(activity, onAsrListener);
             }
         }
@@ -93,12 +93,13 @@ public class AsrPlugin implements MethodChannel.MethodCallHandler {
         String permissions[] = {Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.INTERNET,
+                Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         };
 
         ArrayList<String> toApplyList = new ArrayList<String>();
 
-        for (String perm :permissions){
+        for (String perm : permissions) {
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(activity, perm)) {
                 toApplyList.add(perm);
                 //进入到这里代表没有权限.
@@ -106,7 +107,7 @@ public class AsrPlugin implements MethodChannel.MethodCallHandler {
             }
         }
         String tmpList[] = new String[toApplyList.size()];
-        if (!toApplyList.isEmpty()){
+        if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(activity, toApplyList.toArray(tmpList), 123);
         }
 

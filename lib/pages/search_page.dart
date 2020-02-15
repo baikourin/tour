@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:tour/dao/search_dao.dart';
 import 'package:tour/model/common_model.dart';
 import 'package:tour/model/search_model.dart';
+import 'package:tour/pages/speak_page.dart';
 import 'package:tour/util/navigator_util.dart';
 import 'package:tour/widget/search_bar.dart';
 import 'package:tour/widget/webview.dart';
@@ -72,6 +73,7 @@ class _SearchPageState extends State<SearchPage> {
     }
     try {
       SearchModel model = await SearchDao.fetch(keyword);
+      print("keyword::" + keyword);
       //只有当当前输入的内容和服务端返回的内容一致时才渲染
       if (model.keyword == keyword) {
         setState(() {
@@ -85,7 +87,7 @@ class _SearchPageState extends State<SearchPage> {
 
   //跳转语音识别页面
   void _jumpToSpeak() {
-    NavigatorUtil.push(context, null);
+    NavigatorUtil.push(context, SpeakPage());
   }
 
   @override

@@ -8,6 +8,7 @@ import 'package:tour/model/grid_nav_model.dart';
 import 'package:tour/model/home_model.dart';
 import 'package:tour/model/sales_box_model.dart';
 import 'package:tour/pages/search_page.dart';
+import 'package:tour/pages/speak_page.dart';
 import 'package:tour/util/navigator_util.dart';
 import 'package:tour/widget/grid_nav.dart';
 import 'package:tour/widget/local_nav.dart';
@@ -93,7 +94,10 @@ class _HomePageState extends State<HomePage> {
 
   //跳转语音识别页面
   void _jumpToSpeak() {
-    NavigatorUtil.push(context, null);
+    NavigatorUtil.push(
+      context,
+      SpeakPage()
+    );
   }
 
   @override
