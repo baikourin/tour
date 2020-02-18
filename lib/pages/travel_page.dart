@@ -78,6 +78,15 @@ class _TravelPageState extends State<TravelPage> with TickerProviderStateMixin{
               tabs: tabs.map<Tab>((TravelTab tab) {
                 return Tab(text: tab.labelName,);
               }).toList()),
+          ),
+          // 不用Flexible包裹的话，会是空白页。
+          Flexible(
+            child: TabBarView(
+            controller: _controller,
+            children: tabs.map((TravelTab tab){
+              return Text(tab.groupChannelCode);
+            }).toList(),)
+
           )
         ],
       ),
