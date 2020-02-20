@@ -85,7 +85,7 @@ class _TravelPageState extends State<TravelPage> with TickerProviderStateMixin{
             controller: _controller,
             children: tabs.map((TravelTab tab){
               return Text(tab.groupChannelCode);
-            }).toList(),)
+            }).toList())
 
           )
         ],
