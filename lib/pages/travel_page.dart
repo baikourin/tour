@@ -3,6 +3,7 @@ import 'package:tour/dao/travel_dao.dart';
 import 'package:tour/dao/travel_tab_dao.dart';
 import 'package:tour/model/travel_model.dart';
 import 'package:tour/model/travel_tab_model.dart';
+import 'package:tour/pages/travel_tab_page.dart';
 
 class TravelPage extends StatefulWidget {
   @override
@@ -84,7 +85,12 @@ class _TravelPageState extends State<TravelPage> with TickerProviderStateMixin{
             child: TabBarView(
             controller: _controller,
             children: tabs.map((TravelTab tab){
-              return Text(tab.groupChannelCode);
+              return TravelTabPage(
+                travelUrl: travelTabModel.url,
+                params: travelTabModel.params,
+                groupChannelCode: tab.groupChannelCode,
+                type: tab.type,
+              );
             }).toList())
 
           )
