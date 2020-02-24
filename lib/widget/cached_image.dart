@@ -7,7 +7,7 @@ class CachedImage extends StatelessWidget {
   final String imageUrl;
   final double width;
   final double height;
-  final bool inSizeBox;
+  final bool inSizedBox;
 
   const CachedImage({
     Key key,
@@ -16,13 +16,13 @@ class CachedImage extends StatelessWidget {
     this.fit,
     this.width,
     this.height,
-    this.inSizeBox = false,
+    this.inSizedBox = false,
   })  : assert(imageUrl != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return inSizeBox
+    return inSizedBox
         ? FractionallySizedBox(
             widthFactor: 1,
             child: CachedNetworkImage(
