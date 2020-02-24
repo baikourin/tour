@@ -1,102 +1,276 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:tour/dao/travel_dao.dart';
-import 'package:tour/dao/travel_tab_dao.dart';
 import 'package:tour/model/travel_model.dart';
-import 'package:tour/model/travel_tab_model.dart';
+import 'package:tour/util/navigator_util.dart';
+import 'package:tour/widget/loading_container.dart';
+import 'package:tour/widget/webview.dart';
+import 'package:tour/widget/cached_image.dart';
 
 const TRAVEL_URL =
   'https://m.ctrip.com/restapi/soa2/16189/json/searchTripShootListForHomePageV2?_fxpcqlniredt=09031014111431397988&__gw_appid=99999999&__gw_ver=1.0&__gw_from=10650013707&__gw_platform=H5';
 const PAGE_SIZE = 10;
 
+///旅拍tab页面
 class TravelTabPage extends StatefulWidget {
   final String travelUrl;
+  final Map params;
   final String groupChannelCode;
+  final int type;
 
-  const TravelTabPage({Key key, this.travelUrl, this.groupChannelCode}) : super(key: key);
+  const TravelTabPage(
+    {Key key, this.travelUrl, this.params, this.groupChannelCode, this.type})
+    : super(key: key);
 
   @override
   _TravelTabPageState createState() => _TravelTabPageState();
 }
 
-class _TravelTabPageState extends State<TravelTabPage> {
-
+class _TravelTabPageState extends State<TravelTabPage>
+  with AutomaticKeepAliveClientMixin {
+  List<TravelItem> travelItems;
+  int pageIndex = 1;
+  bool _loading = true;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     _loadData();
-    //    _controller = TabController(length: 0, vsync: this);
-//    try {
-//      TravelTabDao.fetch().then((TravelTabModel model) {
-//      _controller = TabController(length: model.tabs.length, vsync: this); // fix tab label 空白问题
-//        setState(() {
-//          tabs = model.tabs;
-//          travelTabModel = model;
-//        });
-//      });
-//    } catch (e) {
-//      print(e);
-//    }
-
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+        _loadData(loadMore: true);
+      }
+    });
     super.initState();
-  }
-
-  //初始化tab数据
-  void _loadData() async {
-    _controller = TabController(length: 0, vsync: this);
-    try {
-      TravelTabModel model = await TravelTabDao.fetch();
-      _controller = TabController(
-        length: model.tabs.length, vsync: this); //fix tab label 空白问题
-      setState(() {
-        tabs = model.tabs;
-        travelTabModel = model;
-      });
-    } catch (e) {
-      print(e);
-    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  //缓存页面
+  @override
+  bool get wantKeepAlive => true;
+
+  //获取数据
+  void _loadData({loadMore = false}) async {
+    if (loadMore) {
+      pageIndex++;
+    } else {
+      pageIndex = 1;
+    }
+    try {
+      TravelModel model = await TravelDao.fetch(
+        widget.travelUrl ?? TRAVEL_URL,
+        widget.params,
+        widget.groupChannelCode,
+        widget.type,
+        pageIndex,
+        PAGE_SIZE);
+      setState(() {
+        List<TravelItem> items = _filterItems(model.resultList);
+        if (travelItems != null) {
+          travelItems.addAll(items);
+        } else {
+          travelItems = items;
+        }
+        _loading = false;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  //下拉刷新
+  Future<Null> _handleRefresh() async {
+    _loadData();
+    return null;
+  }
+
+  //数据过滤
+  List<TravelItem> _filterItems(List<TravelItem> resultList) {
+    if (resultList == null) return [];
+    List<TravelItem> filterItems = [];
+    resultList.forEach((item) {
+      if (item.article != null && item.article.urls.length > 0 && item.article.images.length>0) { // 移除article为空的模型
+        filterItems.add(item);
+      }
+    });
+    return filterItems;
   }
 
   @override
   Widget build(BuildContext context) {
-//    print(tabs[0]);
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.only(top: 30),
-            child: TabBar(
-              controller: _controller,
-              isScrollable: true,
-              labelColor: Colors.black,
-              labelPadding: EdgeInsets.fromLTRB(20, 0, 20, 5),
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  color: Color(0xff2fcfbb),
-                  width: 3,
-                ),
-                insets: EdgeInsets.only(bottom: 10)),
-              tabs: tabs.map<Tab>((TravelTab tab) {
-                return Tab(text: tab.labelName,);
-              }).toList()),
+      body: LoadingContainer(
+        isLoading: _loading,
+        child: RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: MediaQuery.removePadding(
+            removeTop: true,
+            context: context,
+            child: StaggeredGridView.countBuilder(
+              controller: _scrollController,
+              crossAxisCount: 2,
+              itemCount: travelItems?.length ?? 0,
+              itemBuilder: (BuildContext context, int index) =>
+                _TravelItem(index: index, item: travelItems[index]),
+              staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+            ),
           ),
-          // 不用Flexible包裹的话，会是空白页。
-          Flexible(
-            child: TabBarView(
-              controller: _controller,
-              children: tabs.map((TravelTab tab){
-                return Text(tab.groupChannelCode);
-              }).toList())
+        )),
+    );
+  }
+}
 
+class _TravelItem extends StatelessWidget {
+  final TravelItem item;
+  final int index;
+
+  const _TravelItem({Key key, this.item, this.index}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if (item.article.urls != null && item.article.urls.length > 0) {
+          NavigatorUtil.push(
+            context,
+            WebView(
+              url: item.article.urls[0].h5Url,
+              title: '详情',
+            ));
+        }
+      },
+      child: Card(
+        child: PhysicalModel(
+          color: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.circular(5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _itemImage,
+              Container(
+                padding: EdgeInsets.all(4),
+                child: Text(
+                  item.article.articleTitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ),
+              _infoText,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget get _itemImage {
+    return Stack(
+      children: <Widget>[
+        CachedImage(
+          inSizedBox: true,
+          imageUrl: item.article.images[0]?.dynamicUrl,
+        ),
+        Positioned(
+          bottom: 8,
+          left: 8,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: 3),
+                  child: Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                    size: 12,
+                  ),
+                ),
+                LimitedBox(
+                  maxWidth: 130,
+                  child: Text(
+                    _poiName(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget get _infoText {
+    return Container(
+      padding: EdgeInsets.fromLTRB(6, 0, 6, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              PhysicalModel(
+                color: Colors.transparent,
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(12),
+                child: CachedImage(
+                  imageUrl: item.article.author?.coverImage?.dynamicUrl,
+                  width: 24,
+                  height: 24,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(5),
+                width: 90,
+                child: Text(
+                  item.article.author?.nickName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12),
+                ),
+              )
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.thumb_up,
+                size: 14,
+                color: Colors.grey,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 3),
+                child: Text(
+                  item.article.likeCount.toString(),
+                  style: TextStyle(fontSize: 10),
+                ),
+              )
+            ],
           )
         ],
       ),
     );
+  }
+
+  String _poiName() {
+    return item.article.pois == null || item.article.pois.length == 0
+      ? '未知'
+      : item.article.pois[0]?.poiName ?? '未知';
   }
 }
